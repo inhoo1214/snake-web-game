@@ -32,17 +32,29 @@ function gameLoop() {
   snake.x += snake.dx;
   snake.y += snake.dy;
 
-  // 벽에 부딪히면 게임 리셋
-  if (snake.x < 0 || snake.x >= canvas.width || snake.y < 0 || snake.y >= canvas.height) {
-    resetGame();
-    return;
+  // 벽에 닿으면 방향을 반대로 튕김
+  if (snake.x < 0) {
+    snake.x = 0;
+    snake.dx = grid;
+  } else if (snake.x >= canvas.width) {
+    snake.x = canvas.width - grid;
+    snake.dx = -grid;
+  }
+  if (snake.y < 0) {
+    snake.y = 0;
+    snake.dy = grid;
+  } else if (snake.y >= canvas.height) {
+    snake.y = canvas.height - grid;
+    snake.dy = -grid;
   }
 
   snake.cells.unshift({x: snake.x, y: snake.y});
   if (snake.cells.length > snake.maxCells) snake.cells.pop();
 
-  ctx.fillStyle = '#0f0';
+  // 무지개색 뱀
   snake.cells.forEach((cell, index) => {
+    const hue = (index * 30) % 360;
+    ctx.fillStyle = `hsl(${hue}, 80%, 50%)`;
     ctx.fillRect(cell.x, cell.y, grid-1, grid-1);
     for (let i = index + 1; i < snake.cells.length; i++) {
       if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
@@ -51,8 +63,17 @@ function gameLoop() {
     }
   });
 
-  ctx.fillStyle = 'red';
-  ctx.fillRect(apple.x, apple.y, grid-1, grid-1);
+  // 사과를 노란색 그라데이션으로
+  const appleGradient = ctx.createRadialGradient(
+    apple.x + grid/2, apple.y + grid/2, 2,
+    apple.x + grid/2, apple.y + grid/2, grid/2
+  );
+  appleGradient.addColorStop(0, '#fff700');
+  appleGradient.addColorStop(1, '#ff8800');
+  ctx.fillStyle = appleGradient;
+  ctx.beginPath();
+  ctx.arc(apple.x + grid/2, apple.y + grid/2, grid/2-1, 0, Math.PI*2);
+  ctx.fill();
 
   if (snake.x === apple.x && snake.y === apple.y) {
     snake.maxCells++;
