@@ -27,7 +27,16 @@ function gameLoop() {
   requestAnimationFrame(gameLoop);
   if (++count < 4) return;
   count = 0;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // 풍경 배경 그리기
+  if (!window.bgImage) {
+    window.bgImage = new Image();
+    window.bgImage.src = 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80'; // 예시 풍경 이미지
+  }
+  if (window.bgImage.complete) {
+    ctx.drawImage(window.bgImage, 0, 0, canvas.width, canvas.height);
+  } else {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
 
   snake.x += snake.dx;
   snake.y += snake.dy;
