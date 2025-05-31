@@ -32,10 +32,11 @@ function gameLoop() {
   snake.x += snake.dx;
   snake.y += snake.dy;
 
-  if (snake.x < 0) snake.x = canvas.width - grid;
-  else if (snake.x >= canvas.width) snake.x = 0;
-  if (snake.y < 0) snake.y = canvas.height - grid;
-  else if (snake.y >= canvas.height) snake.y = 0;
+  // 벽에 부딪히면 게임 리셋
+  if (snake.x < 0 || snake.x >= canvas.width || snake.y < 0 || snake.y >= canvas.height) {
+    resetGame();
+    return;
+  }
 
   snake.cells.unshift({x: snake.x, y: snake.y});
   if (snake.cells.length > snake.maxCells) snake.cells.pop();
